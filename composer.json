@@ -1,0 +1,29 @@
+{
+    "name": "sidworks/sw-plugin-template",
+    "description": "Sidworks Plugin %REPLACE_WITH_NAME%",
+    "type": "shopware-platform-plugin",
+    "version": "1.0.0",
+    "require": {
+        "shopware/core": "^6.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sidworks"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Sidworks\\%REPLACE_WITH_NAME%\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Sidworks\\%REPLACE_WITH_NAME%\\Sidworks%REPLACE_WITH_NAME%",
+        "label": {
+            "en-GB": "Sidworks Plugin %REPLACE_WITH_NAME%"
+        },
+        "description": {
+            "en-GB": "Sidworks Plugin %REPLACE_WITH_NAME%"
+        }
+    }
+}
