@@ -2,7 +2,6 @@
 
 namespace Sidworks\SearchResults\Subscriber;
 
-use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
@@ -36,11 +35,10 @@ class SearchSubscriber implements EventSubscriberInterface
 
         $term = strip_tags($term);
 
-        // Context en salesChannel ophalen uit event
         $context = $event->getContext();
         $salesChannelId = $event->getSalesChannelContext()->getSalesChannel()->getId();
 
-        // Zoeken op combinatie van searchTerm en salesChannelId
+
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsFilter('searchTerm', $term));
         $criteria->addFilter(new EqualsFilter('salesChannelId', $salesChannelId));

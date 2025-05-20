@@ -38,14 +38,11 @@ class SearchResultsDefinition extends EntityDefinition
     {
         return new FieldCollection([
             (new IdField('id', 'id'))->addFlags(new Required(), new PrimaryKey()),
-
             (new StringField('search_term', 'searchTerm'))->addFlags(new Required(), new ApiAware()),
             (new IntField('times_searched', 'timesSearched'))->addFlags(new Required(), new ApiAware()),
 
-            // FK to sales_channel
             (new FkField('sales_channel_id', 'salesChannelId', SalesChannelDefinition::class))->addFlags(new Required(), new ApiAware()),
 
-            // Association
             new ManyToOneAssociationField('salesChannel', 'sales_channel_id', SalesChannelDefinition::class, 'id', false),
 
             (new DateTimeField('created_at', 'createdAt'))->addFlags(new Required()),

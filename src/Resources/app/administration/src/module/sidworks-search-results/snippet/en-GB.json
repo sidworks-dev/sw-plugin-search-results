@@ -1,0 +1,20 @@
+{
+    "sw-privileges": {
+        "permissions": {
+            "sidworks_search_results": {
+                "label": "Sidworks Search Results"
+            }
+        }
+    },
+
+    "sidworks-search-results": {
+        "general": {
+            "pluginTitle": "Search Results",
+            "pluginDescription": "Manage Search Results"
+        },
+        "list": {
+            "searchTerm": "Search term",
+            "timesSearched": "Times searched"
+        }
+    }
+}

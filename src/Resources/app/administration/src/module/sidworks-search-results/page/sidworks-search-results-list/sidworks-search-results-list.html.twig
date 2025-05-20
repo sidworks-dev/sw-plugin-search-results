@@ -1,0 +1,29 @@
+{% block sidworks_search_results_list %}
+    <sw-page>
+        <template #smart-bar-header>
+            <h2>
+                Search Results
+                <span v-if="!isLoading" class="sw-page__smart-bar-amount">({{ total }})</span>
+            </h2>
+        </template>
+
+        {% block sidworks_search_results_list_language_switch %}
+            <template #language-switch>
+                <sw-language-switch @on-change="onChangeLanguage"/>
+            </template>
+        {% endblock %}
+
+        {% block sidworks_search_results_list_content %}
+            <template #content>
+                <sw-entity-listing
+                        v-if="searchResultsRepositoryItems && searchResultsRepositoryItems.length > 0"
+                        :items="searchResultsRepositoryItems"
+                        :repository="searchResultsRepository"
+                        :showSelection="false"
+                        :columns="columns"
+                        @update-records="updateTotal"
+                 />
+            </template>
+        {% endblock %}
+    </sw-page>
+{% endblock %}
