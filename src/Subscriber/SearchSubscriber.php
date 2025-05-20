@@ -2,12 +2,17 @@
 
 namespace Sidworks\SearchResults\Subscriber;
 
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Storefront\Page\Search\SearchPageLoadedEvent;
 use Shopware\Storefront\Page\Suggest\SuggestPageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SearchSubscriber implements EventSubscriberInterface
 {
+    public function __construct(
+        private readonly EntityRepository $searchResultsRepository
+    ) {}
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -18,9 +23,8 @@ class SearchSubscriber implements EventSubscriberInterface
 
     public function trackSearch($event): void
     {
-        die('hier');
         $request = $event->getRequest();
-        $term = trim((string) $request->query->get('search', ''));
+        $term = trim((string)$request->query->get('search', ''));
 
         if ($term === '' || strlen($term) > 255) {
             return;
@@ -34,15 +38,15 @@ class SearchSubscriber implements EventSubscriberInterface
         // Try updating existing record
         $criteria = new \Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria();
         $criteria->addFilter(new \Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter('searchTerm', $term));
-        $existing = $this->statsRepo->search($criteria, $context)->first();
+        $existing = $this->searchResultsRepository->search($criteria, $context)->first();
 
         if ($existing) {
-            $this->statsRepo->update([[
+            $this->searchResultsRepository->update([[
                 'id' => $existing->getId(),
                 'timesSearched' => $existing->getTimesSearched() + 1,
             ]], $context);
         } else {
-            $this->statsRepo->create([[
+            $this->searchResultsRepository->create([[
                 'id' => \Shopware\Core\Framework\Uuid\Uuid::randomHex(),
                 'searchTerm' => $term,
                 'timesSearched' => 1,

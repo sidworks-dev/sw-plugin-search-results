@@ -3,7 +3,12 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="Sidworks\SearchResults\Core\Content\SearchResults\SearchResultsDefinition">
+            <tag name="shopware.entity.definition"/>
+        </service>
+
         <service id="Sidworks\SearchResults\Subscriber\SearchSubscriber">
+            <argument type="service" id="sidworks_search_results.repository"/>
             <tag name="kernel.event_subscriber"/>
         </service>
     </services>
