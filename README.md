@@ -1,5 +1,5 @@
 # Sidworks SearchResults for Shopware 6
-Simple plugin that adds a list with search results to analyse for marketing purposes
+Simple plugin that adds a list with search results to analyze for marketing purposes
 
 ## Installation
 ```bash
