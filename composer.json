@@ -20,10 +20,10 @@
     "extra": {
         "shopware-plugin-class": "Sidworks\\SearchResults\\SidworksSearchResults",
         "label": {
-            "en-GB": "Sidworks Plugin SearchResults"
+            "en-GB": "Sidworks Search Results"
         },
         "description": {
-            "en-GB": "Sidworks Plugin SearchResults"
+            "en-GB": "Sidworks Search Results"
         }
     }
 }
