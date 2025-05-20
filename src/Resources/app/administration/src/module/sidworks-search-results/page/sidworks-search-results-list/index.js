@@ -1,6 +1,6 @@
 import template from './sidworks-search-results-list.html.twig';
 
-const { Criteria } = Shopware.Data;
+const {Criteria} = Shopware.Data;
 
 export default {
     template,
@@ -27,7 +27,8 @@ export default {
     methods: {
         getList() {
             const criteria = new Criteria();
-            criteria.addSorting(Criteria.sort('timesSearched', 'DESC')); // <-- sorting added here
+            criteria.addSorting(Criteria.sort('timesSearched', 'DESC'));
+            criteria.addAssociation('salesChannel');
 
             this.searchResultsRepository
                 .search(criteria, Shopware.Context.api)
@@ -35,22 +36,10 @@ export default {
                     this.searchResultsRepositoryItems = result;
                     this.total = result.total;
                 });
-        },
-
-        updateTotal({ total }) {
-            this.total = total;
-        },
-
-        onChangeLanguage(languageId) {
-            Shopware.State.commit('context/setApiLanguageId', languageId);
-            this.getList();
         }
     },
 
     computed: {
-        dateFilter() {
-            return Shopware.Filter.getByName('date');
-        },
         columns() {
             return [
                 {
@@ -61,7 +50,12 @@ export default {
                 {
                     property: 'timesSearched',
                     dataIndex: 'timesSearched',
-                    label: this.$t('sidworks-search-results.list.timesSearched')
+                    label: this.$t('sidworks-search-results.list.timesSearched'),
+                },
+                {
+                    property: 'salesChannel.name',
+                    dataIndex: 'salesChannel.name',
+                    label: this.$t('sidworks-search-results.list.salesChannel'),
                 }
             ];
         }

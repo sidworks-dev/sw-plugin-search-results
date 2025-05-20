@@ -14,7 +14,8 @@
         },
         "list": {
             "searchTerm": "Search term",
-            "timesSearched": "Times searched"
+            "timesSearched": "Times searched",
+            "salesChannel": "Sales Channel"
         }
     }
 }

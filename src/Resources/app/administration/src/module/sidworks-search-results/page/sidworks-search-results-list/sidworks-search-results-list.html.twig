@@ -7,12 +7,6 @@
             </h2>
         </template>
 
-        {% block sidworks_search_results_list_language_switch %}
-            <template #language-switch>
-                <sw-language-switch @on-change="onChangeLanguage"/>
-            </template>
-        {% endblock %}
-
         {% block sidworks_search_results_list_content %}
             <template #content>
                 <sw-entity-listing
