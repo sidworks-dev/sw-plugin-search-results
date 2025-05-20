@@ -1,6 +1,6 @@
 {
-    "name": "sidworks/sw-plugin-template",
-    "description": "Sidworks Plugin %REPLACE_WITH_NAME%",
+    "name": "sidworks/sw-plugin-search-results",
+    "description": "Sidworks Plugin SearchResults",
     "type": "shopware-platform-plugin",
     "version": "1.0.0",
     "require": {
@@ -14,16 +14,16 @@
     ],
     "autoload": {
         "psr-4": {
-            "Sidworks\\%REPLACE_WITH_NAME%\\": "src/"
+            "Sidworks\\SearchResults\\": "src/"
         }
     },
     "extra": {
-        "shopware-plugin-class": "Sidworks\\%REPLACE_WITH_NAME%\\Sidworks%REPLACE_WITH_NAME%",
+        "shopware-plugin-class": "Sidworks\\SearchResults\\SidworksSearchResults",
         "label": {
-            "en-GB": "Sidworks Plugin %REPLACE_WITH_NAME%"
+            "en-GB": "Sidworks Plugin SearchResults"
         },
         "description": {
-            "en-GB": "Sidworks Plugin %REPLACE_WITH_NAME%"
+            "en-GB": "Sidworks Plugin SearchResults"
         }
     }
 }
