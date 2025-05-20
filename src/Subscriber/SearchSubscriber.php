@@ -11,18 +11,42 @@ class SearchSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            SuggestPageLoadedEvent::class => 'onSearchSuggestPageLoaded',
-            SearchPageLoadedEvent::class => 'onSearchPageLoaded'
+            SuggestPageLoadedEvent::class => 'trackSearch',
+            SearchPageLoadedEvent::class => 'trackSearch'
         ];
     }
 
-    public function onSearchSuggestPageLoaded(SuggestPageLoadedEvent $event): void
+    public function trackSearch($event): void
     {
-        die('onSearchSuggestPageLoaded');
-    }
+        die('hier');
+        $request = $event->getRequest();
+        $term = trim((string) $request->query->get('search', ''));
 
-    public function onSearchPageLoaded(SearchPageLoadedEvent $event): void
-    {
-        die('onSearchPageLoaded');
+        if ($term === '' || strlen($term) > 255) {
+            return;
+        }
+
+        // Simple sanitization
+        $term = strip_tags($term);
+
+        $context = Context::createDefaultContext();
+
+        // Try updating existing record
+        $criteria = new \Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria();
+        $criteria->addFilter(new \Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter('searchTerm', $term));
+        $existing = $this->statsRepo->search($criteria, $context)->first();
+
+        if ($existing) {
+            $this->statsRepo->update([[
+                'id' => $existing->getId(),
+                'timesSearched' => $existing->getTimesSearched() + 1,
+            ]], $context);
+        } else {
+            $this->statsRepo->create([[
+                'id' => \Shopware\Core\Framework\Uuid\Uuid::randomHex(),
+                'searchTerm' => $term,
+                'timesSearched' => 1,
+            ]], $context);
+        }
     }
 }
