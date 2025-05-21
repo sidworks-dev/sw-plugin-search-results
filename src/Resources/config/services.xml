@@ -9,6 +9,7 @@
 
         <service id="Sidworks\SearchResults\Subscriber\SearchSubscriber">
             <argument type="service" id="sidworks_search_results.repository"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
             <tag name="kernel.event_subscriber"/>
         </service>
     </services>
