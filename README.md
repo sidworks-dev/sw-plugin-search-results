@@ -10,3 +10,10 @@ composer require sidworks/sw-plugin-search-results
 bin/console plugin:refresh
 bin/console plugin:install --activate SidworksSearchResults
 ```
+
+## TODO
+- Add amount of search results to search term
+- Make filter work
+  - Sales Channels
+  - Date
+- Add configuration for minimum times searched
