@@ -26,7 +26,7 @@ export default {
 
     methods: {
         getList() {
-            const criteria = new Criteria();
+            const criteria = new Criteria(1, 25);
             criteria.addSorting(Criteria.sort('timesSearched', 'DESC'));
             criteria.addAssociation('salesChannel');
 
