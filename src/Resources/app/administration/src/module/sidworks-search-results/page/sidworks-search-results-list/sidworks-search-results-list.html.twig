@@ -2,7 +2,7 @@
     <sw-page>
         <template #smart-bar-header>
             <h2>
-                Search Results
+                {{ $tc(`sidworks-search-results.general.pluginTitle`) }}
                 <span v-if="!isLoading" class="sw-page__smart-bar-amount">({{ total }})</span>
             </h2>
         </template>
