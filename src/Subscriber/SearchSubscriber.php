@@ -6,10 +6,12 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
+use Shopware\Storefront\Page\Search\SearchPage;
 use Shopware\Storefront\Page\Search\SearchPageLoadedEvent;
+use Shopware\Storefront\Page\Suggest\SuggestPage;
 use Shopware\Storefront\Page\Suggest\SuggestPageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class SearchSubscriber implements EventSubscriberInterface
 {
@@ -22,11 +24,11 @@ class SearchSubscriber implements EventSubscriberInterface
     {
         return [
             SuggestPageLoadedEvent::class => 'onSuggestPageLoaded',
-            SearchPageLoadedEvent::class => 'onSearchPageLoaded'
+            SearchPageLoadedEvent::class => 'onSearchPageLoaded',
         ];
     }
 
-    public function onSuggestPageLoaded($event): void
+    public function onSuggestPageLoaded(SuggestPageLoadedEvent $event): void
     {
         if (!$this->systemConfigService->get('SidworksSearchResults.config.suggestSearchEnabled')) {
             return;
@@ -35,16 +37,14 @@ class SearchSubscriber implements EventSubscriberInterface
         $this->trackSearch($event);
     }
 
-    public function onSearchPageLoaded($event): void
+    public function onSearchPageLoaded(SearchPageLoadedEvent $event): void
     {
         $this->trackSearch($event);
     }
 
-    private function trackSearch($event): void
+    private function trackSearch(SuggestPageLoadedEvent|SearchPageLoadedEvent $event): void
     {
-        $request = $event->getRequest();
-        $term = strip_tags(trim((string) $request->query->get('search', '')));
-
+        $term = trim(strip_tags((string) $event->getRequest()->query->get('search', '')));
         if (!$this->isValidTerm($term)) {
             return;
         }
@@ -58,16 +58,26 @@ class SearchSubscriber implements EventSubscriberInterface
 
         $existing = $this->searchResultsRepository->search($criteria, $context)->first();
 
+        $productListingResult = match (true) {
+            $event->getPage() instanceof SuggestPage => $event->getPage()->getSearchResult(),
+            $event->getPage() instanceof SearchPage => $event->getPage()->getListing(),
+            default => null,
+        };
+
+        $resultsCount = $productListingResult?->getTotal() ?? 0;
+
         if ($existing) {
             $this->searchResultsRepository->update([[
                 'id' => $existing->getId(),
                 'timesSearched' => $existing->getTimesSearched() + 1,
+                'resultsCount' => $resultsCount,
             ]], $context);
         } else {
             $this->searchResultsRepository->create([[
                 'id' => Uuid::randomHex(),
                 'searchTerm' => $term,
                 'timesSearched' => 1,
+                'resultsCount' => $resultsCount,
                 'salesChannelId' => $salesChannelId,
             ]], $context);
         }

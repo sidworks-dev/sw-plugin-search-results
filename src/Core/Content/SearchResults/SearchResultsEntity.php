@@ -36,6 +36,16 @@ class SearchResultsEntity extends Entity
         $this->timesSearched = $timesSearched;
     }
 
+    public function getResultsCount(): int
+    {
+        return $this->resultsCount;
+    }
+
+    public function setResultsCount(int $resultsCount): void
+    {
+        $this->resultsCount = $resultsCount;
+    }
+
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;

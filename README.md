@@ -12,7 +12,6 @@ bin/console plugin:install --activate SidworksSearchResults
 ```
 
 ## TODO
-- Add amount of search results to search term
 - Make filter work
   - Sales Channels
   - Date

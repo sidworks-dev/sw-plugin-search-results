@@ -40,6 +40,7 @@ class SearchResultsDefinition extends EntityDefinition
             (new IdField('id', 'id'))->addFlags(new Required(), new PrimaryKey()),
             (new StringField('search_term', 'searchTerm'))->addFlags(new Required(), new ApiAware()),
             (new IntField('times_searched', 'timesSearched'))->addFlags(new Required(), new ApiAware()),
+            (new IntField('results_count', 'resultsCount'))->addFlags(new Required(), new ApiAware()),
 
             (new FkField('sales_channel_id', 'salesChannelId', SalesChannelDefinition::class))->addFlags(new Required(), new ApiAware()),
 

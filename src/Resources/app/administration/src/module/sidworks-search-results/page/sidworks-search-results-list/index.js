@@ -53,6 +53,11 @@ export default {
                     label: this.$t('sidworks-search-results.list.timesSearched'),
                 },
                 {
+                    property: 'resultsCount',
+                    dataIndex: 'resultsCount',
+                    label: this.$t('sidworks-search-results.list.resultsCount'),
+                },
+                {
                     property: 'salesChannel.name',
                     dataIndex: 'salesChannel.name',
                     label: this.$t('sidworks-search-results.list.salesChannel'),
