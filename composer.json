@@ -2,7 +2,7 @@
     "name": "sidworks/sw-plugin-search-results",
     "description": "Sidworks Plugin SearchResults",
     "type": "shopware-platform-plugin",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "require": {
         "shopware/core": "^6.6"
     },

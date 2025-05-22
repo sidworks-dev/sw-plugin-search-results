@@ -13,8 +13,8 @@
             "pluginDescription": "Manage Search Results"
         },
         "list": {
-            "searchTerm": "Search term",
-            "timesSearched": "Times searched",
+            "searchTerm": "Search Term",
+            "timesSearched": "Times Searched",
             "salesChannel": "Sales Channel"
         }
     }

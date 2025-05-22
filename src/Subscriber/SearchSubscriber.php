@@ -21,22 +21,31 @@ class SearchSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            SuggestPageLoadedEvent::class => 'trackSearch',
-            SearchPageLoadedEvent::class => 'trackSearch'
+            SuggestPageLoadedEvent::class => 'onSuggestPageLoaded',
+            SearchPageLoadedEvent::class => 'onSearchPageLoaded'
         ];
     }
 
-    public function trackSearch($event): void
+    public function onSuggestPageLoaded($event): void
+    {
+        if (!$this->systemConfigService->get('SidworksSearchResults.config.suggestSearchEnabled')) {
+            return;
+        }
+
+        $this->trackSearch($event);
+    }
+
+    public function onSearchPageLoaded($event): void
+    {
+        $this->trackSearch($event);
+    }
+
+    private function trackSearch($event): void
     {
         $request = $event->getRequest();
-        $term = trim((string) $request->query->get('search', ''));
+        $term = strip_tags(trim((string) $request->query->get('search', '')));
 
-        $term = strip_tags($term);
-
-        $minLength = (int) $this->systemConfigService->get('SidworksSearchResults.config.minStringLength') ?? 2;
-        $maxLength = (int) $this->systemConfigService->get('SidworksSearchResults.config.maxStringLength') ?? 255;
-
-        if ($term === '' || strlen($term) < $minLength || strlen($term) > $maxLength) {
+        if (!$this->isValidTerm($term)) {
             return;
         }
 
@@ -62,5 +71,17 @@ class SearchSubscriber implements EventSubscriberInterface
                 'salesChannelId' => $salesChannelId,
             ]], $context);
         }
+    }
+
+    private function isValidTerm(string $term): bool
+    {
+        if ($term === '') {
+            return false;
+        }
+
+        $minLength = (int) $this->systemConfigService->get('SidworksSearchResults.config.minStringLength') ?? 2;
+        $maxLength = (int) $this->systemConfigService->get('SidworksSearchResults.config.maxStringLength') ?? 255;
+
+        return strlen($term) >= $minLength && strlen($term) <= $maxLength;
     }
 }

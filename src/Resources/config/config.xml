@@ -6,6 +6,13 @@
     <card>
         <title>Sidworks Search Results Configuration</title>
 
+        <input-field type="bool">
+            <name>suggestSearchEnabled</name>
+            <label>Enable Ajax Search Results save</label>
+            <helpText lang="en-GB">Enables ajax search results logging</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+
         <input-field type="int">
             <name>minStringLength</name>
             <label lang="en-GB">Minimum Search Term Length</label>
