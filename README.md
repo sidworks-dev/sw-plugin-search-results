@@ -2,7 +2,7 @@
 Simple plugin that adds a list with search results to analyze for marketing purposes
 
 ## Images
-![HYPR](docs/s1.png)
+![s1](docs/s1.png)
 
 ## Installation
 ```bash
