@@ -19,5 +19,30 @@
                  />
             </template>
         {% endblock %}
+
+        {% block sidworks_search_results_list_sidebar %}
+            <template #sidebar>
+                <sw-sidebar class="sw-customer-list__sidebar">
+                    {% block sidworks_search_results_list_sidebar_refresh %}
+                        <sw-sidebar-item
+                            icon="regular-undo"
+                            :title="$tc('sw-customer.list.titleSidebarItemRefresh')"
+                            @click="onRefresh"
+                        />
+                    {% endblock %}
+
+                    {% block sidworks_search_results_list_sidebar_filter %}
+                        <sw-sidebar-filter-panel
+                            entity="order_return"
+                            :storeKey="storeKey"
+                            :filters="listFilters"
+                            :defaults="defaultFilters"
+                            :active-filter-number="activeFilterNumber"
+                            @criteria-changed="updateCriteria"
+                        />
+                    {% endblock %}
+                </sw-sidebar>
+            </template>
+        {% endblock %}
     </sw-page>
 {% endblock %}

@@ -1,6 +1,12 @@
 # Change Log for Sidworks SearchResults plugin
 All notable changes to this module will be documented in this file.
 
+## 1.0.4 [07-08-2025]
+- Added filtering for search results in admin
+
+### Changed
+- Results count has been added to keep track of the total results of a search term
+
 ## 1.0.3 [22-05-2025]
 ### Added
 - Results count has been added to keep track of the total results of a search term

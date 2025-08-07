@@ -2,6 +2,7 @@
 
 namespace Sidworks\SearchResults\Subscriber;
 
+use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
@@ -12,6 +13,7 @@ use Shopware\Storefront\Page\Search\SearchPageLoadedEvent;
 use Shopware\Storefront\Page\Suggest\SuggestPage;
 use Shopware\Storefront\Page\Suggest\SuggestPageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class SearchSubscriber implements EventSubscriberInterface
 {
@@ -44,27 +46,61 @@ class SearchSubscriber implements EventSubscriberInterface
 
     private function trackSearch(SuggestPageLoadedEvent|SearchPageLoadedEvent $event): void
     {
-        $term = trim(strip_tags((string) $event->getRequest()->query->get('search', '')));
-        if (!$this->isValidTerm($term)) {
+        $request = $event->getRequest();
+        $term = $this->getSearchTerm($request);
+
+        if (!$this->isValidTerm($term) || $this->hasFiltersApplied($request)) {
             return;
         }
 
         $context = $event->getContext();
         $salesChannelId = $event->getSalesChannelContext()->getSalesChannel()->getId();
+        $resultsCount = $this->getSearchResultCount($event);
 
-        $criteria = new Criteria();
-        $criteria->addFilter(new EqualsFilter('searchTerm', $term));
-        $criteria->addFilter(new EqualsFilter('salesChannelId', $salesChannelId));
+        $this->storeOrUpdateSearchResult($term, $salesChannelId, $resultsCount, $context);
+    }
 
-        $existing = $this->searchResultsRepository->search($criteria, $context)->first();
+    private function getSearchTerm(Request $request): string
+    {
+        return trim(strip_tags((string) $request->query->get('search', '')));
+    }
 
+    private function isValidTerm(string $term): bool
+    {
+        if ($term === '') {
+            return false;
+        }
+
+        $minLength = (int) ($this->systemConfigService->get('SidworksSearchResults.config.minStringLength') ?? 2);
+        $maxLength = (int) ($this->systemConfigService->get('SidworksSearchResults.config.maxStringLength') ?? 255);
+
+        return strlen($term) >= $minLength && strlen($term) <= $maxLength;
+    }
+
+    private function hasFiltersApplied(Request $request): bool
+    {
+        $queryParams = $request->query->all();
+        return count(array_diff(array_keys($queryParams), ['search'])) > 0;
+    }
+
+    private function getSearchResultCount(SuggestPageLoadedEvent|SearchPageLoadedEvent $event): int
+    {
         $productListingResult = match (true) {
             $event->getPage() instanceof SuggestPage => $event->getPage()->getSearchResult(),
             $event->getPage() instanceof SearchPage => $event->getPage()->getListing(),
             default => null,
         };
 
-        $resultsCount = $productListingResult?->getTotal() ?? 0;
+        return $productListingResult?->getTotal() ?? 0;
+    }
+
+    private function storeOrUpdateSearchResult(string $term, string $salesChannelId, int $resultsCount, Context $context): void
+    {
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('searchTerm', $term));
+        $criteria->addFilter(new EqualsFilter('salesChannelId', $salesChannelId));
+
+        $existing = $this->searchResultsRepository->search($criteria, $context)->first();
 
         if ($existing) {
             $this->searchResultsRepository->update([[
@@ -81,17 +117,5 @@ class SearchSubscriber implements EventSubscriberInterface
                 'salesChannelId' => $salesChannelId,
             ]], $context);
         }
-    }
-
-    private function isValidTerm(string $term): bool
-    {
-        if ($term === '') {
-            return false;
-        }
-
-        $minLength = (int) $this->systemConfigService->get('SidworksSearchResults.config.minStringLength') ?? 2;
-        $maxLength = (int) $this->systemConfigService->get('SidworksSearchResults.config.maxStringLength') ?? 255;
-
-        return strlen($term) >= $minLength && strlen($term) <= $maxLength;
     }
 }
