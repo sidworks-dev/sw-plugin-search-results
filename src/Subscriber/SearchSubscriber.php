@@ -79,8 +79,11 @@ class SearchSubscriber implements EventSubscriberInterface
 
     private function hasFiltersApplied(Request $request): bool
     {
+        $ignoredParams = ['search', 'limit', 'p', 'order'];
         $queryParams = $request->query->all();
-        return count(array_diff(array_keys($queryParams), ['search'])) > 0;
+        $filteredParams = array_diff_key($queryParams, array_flip($ignoredParams));
+
+        return !empty($filteredParams);
     }
 
     private function getSearchResultCount(SuggestPageLoadedEvent|SearchPageLoadedEvent $event): int

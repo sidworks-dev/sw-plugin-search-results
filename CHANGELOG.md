@@ -1,6 +1,10 @@
 # Change Log for Sidworks SearchResults plugin
 All notable changes to this module will be documented in this file.
 
+## 1.0.5 [18-08-2025]
+### Fixed
+- Check on filters applied to prevent wrong results has been changed to be more accurate
+
 ## 1.0.4 [07-08-2025]
 ### Added
 - Added filtering for search results in admin
